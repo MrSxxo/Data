@@ -312,18 +312,6 @@ keyButton.MouseButton1Click:Connect(function()
 end)
 
 -- ==================== MENÚ PRINCIPAL CON VALORES VISIBLES ====================
--- Crédito
-	local credit = Instance.new("TextLabel")
-	credit.Size = UDim2.new(0, 180, 0, 20)
-	credit.Position = UDim2.new(0, 15, 0, 8)
-	credit.BackgroundTransparency = 1
-	credit.Text = "Creado por MrSxxo"
-	credit.TextColor3 = Color3.fromRGB(0, 255, 200)
-	credit.TextSize = 14
-	credit.Font = Enum.Font.GothamBold
-	credit.TextXAlignment = Enum.TextXAlignment.Left
-	credit.Parent = mainFrame
-
 function createMainMenu()
 	local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 	
