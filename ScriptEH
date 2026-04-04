@@ -299,7 +299,7 @@ keyButton.MouseButton1Click:Connect(function()
 		keyStatus.Text = "Acceso otorgado"
 		keyStatus.TextColor3 = Color3.fromRGB(0, 255, 100)
 		
-		task.wait(1)
+		task.wait(2)
 		
 		keyGUI:Destroy()
 		createMainMenu()
@@ -312,6 +312,18 @@ keyButton.MouseButton1Click:Connect(function()
 end)
 
 -- ==================== MENÚ PRINCIPAL CON VALORES VISIBLES ====================
+-- Crédito
+	local credit = Instance.new("TextLabel")
+	credit.Size = UDim2.new(0, 180, 0, 20)
+	credit.Position = UDim2.new(0, 15, 0, 8)
+	credit.BackgroundTransparency = 1
+	credit.Text = "Creado por MrSxxo"
+	credit.TextColor3 = Color3.fromRGB(0, 255, 200)
+	credit.TextSize = 14
+	credit.Font = Enum.Font.GothamBold
+	credit.TextXAlignment = Enum.TextXAlignment.Left
+	credit.Parent = mainFrame
+
 function createMainMenu()
 	local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 	
@@ -342,7 +354,7 @@ function createMainMenu()
 	title.Size = UDim2.new(0.75, 0, 0, 40)
 	title.Position = UDim2.new(0.05, 0, 0.03, 0)
 	title.BackgroundTransparency = 1
-	title.Text = "AIMLOCK + ESP - Emergency Hamburg"
+	title.Text = "AimLock + ESP - EH v1.0.2"
 	title.TextColor3 = Color3.fromRGB(255, 255, 255)
 	title.TextSize = 22
 	title.Font = Enum.Font.GothamBold
