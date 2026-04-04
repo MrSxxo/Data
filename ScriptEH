@@ -1,7 +1,8 @@
 -- =============================================
--- AIMLOCK + ESP + FAST PICKUP - Emergency Hamburg
--- Menú horizontal | Casillas verde/gris | Fondo negro
--- Tecla: K
+-- AIMLOCK + ESP + FAST PICKUP + ANTI TASER + KEY SYSTEM
+-- Emergency Hamburg - FINAL VERSION (PC + MÓVIL)
+-- Key: 4fpgp15k
+-- Menú con valores actuales visibles al lado de cada categoría
 -- =============================================
 
 local Players = game:GetService("Players")
@@ -14,8 +15,10 @@ local camera = workspace.CurrentCamera
 local aimlockEnabled = false
 local espEnabled = false
 local fastPickupEnabled = false
+local antiTaserEnabled = false
 local connection = nil
 local pickupConnection = nil
+local antiTaserLoop = nil
 
 -- ==================== CONFIG ====================
 local TARGET_PART = "Head"
@@ -24,7 +27,7 @@ local MAX_ESP_DISTANCE = 500
 local FOV_LIMIT = 120
 local aimSmoothness = 0.25
 
--- ==================== AIMLOCK ====================
+-- ==================== FUNCIONES DEL SCRIPT ====================
 local function getClosestPlayer()
 	local closest, shortest = nil, math.huge
 	local myChar = player.Character
@@ -64,7 +67,6 @@ local function updateAimlock()
 	end
 end
 
--- ==================== ESP ====================
 local drawings = {}
 
 local function getBoxInfo(plr)
@@ -170,7 +172,6 @@ local function updateESP()
 	end
 end
 
--- ==================== FAST PICKUP ====================
 local function enableFastPickup()
 	for _,obj in ipairs(workspace:GetDescendants()) do
 		if obj:IsA("ProximityPrompt") then obj.HoldDuration = 0 end
@@ -183,225 +184,453 @@ local function disableFastPickup()
 	end
 end
 
--- ==================== GUI HORIZONTAL ====================
-local sg = Instance.new("ScreenGui")
-sg.ResetOnSpawn = false
-sg.Parent = player:WaitForChild("PlayerGui")
-
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0,680,0,320)
-frame.Position = UDim2.new(0.5,-340,0.35,0)
-frame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-frame.BorderSizePixel = 0
-frame.Parent = sg
-
-Instance.new("UICorner",frame).CornerRadius = UDim.new(0,12)
-local stroke = Instance.new("UIStroke",frame)
-stroke.Color = Color3.fromRGB(80,80,255)
-stroke.Thickness = 2.5
-
--- Título
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(0.65,0,0,40)
-title.Position = UDim2.new(0.05,0,0.03,0)
-title.BackgroundTransparency = 1
-title.Text = "AIMLOCK + ESP - Emergency Hamburg"
-title.TextColor3 = Color3.fromRGB(255,255,255)
-title.TextSize = 22
-title.Font = Enum.Font.GothamBold
-title.Parent = frame
-
--- Tecla K
-local keyLabel = Instance.new("TextLabel")
-keyLabel.Size = UDim2.new(0.65,0,0,25)
-keyLabel.Position = UDim2.new(0.05,0,0.18,0)
-keyLabel.BackgroundTransparency = 1
-keyLabel.Text = "Abre/cierra el menú con la letra K"
-keyLabel.TextColor3 = Color3.fromRGB(180,180,255)
-keyLabel.TextSize = 16
-keyLabel.Font = Enum.Font.GothamMedium
-keyLabel.Parent = frame
-
--- AIMLOCK
-local aimBtn = Instance.new("TextButton")
-aimBtn.Size = UDim2.new(0.42,0,0,45)
-aimBtn.Position = UDim2.new(0.04,0,0.28,0)
-aimBtn.BackgroundColor3 = Color3.fromRGB(30,30,30)
-aimBtn.Text = "AIMLOCK: OFF"
-aimBtn.TextColor3 = Color3.fromRGB(255,255,255)
-aimBtn.TextSize = 18
-aimBtn.Font = Enum.Font.GothamSemibold
-aimBtn.TextXAlignment = Enum.TextXAlignment.Left
-aimBtn.Parent = frame
-Instance.new("UICorner",aimBtn).CornerRadius = UDim.new(0,10)
-
-local aimBox = Instance.new("Frame",aimBtn)
-aimBox.Size = UDim2.new(0,32,0,32)
-aimBox.Position = UDim2.new(1,-48,0.5,-16)
-aimBox.BackgroundColor3 = Color3.fromRGB(100,100,100)
-Instance.new("UICorner",aimBox).CornerRadius = UDim.new(0,6)
-
--- ESP
-local espBtn = Instance.new("TextButton")
-espBtn.Size = UDim2.new(0.42,0,0,45)
-espBtn.Position = UDim2.new(0.50,0,0.28,0)
-espBtn.BackgroundColor3 = Color3.fromRGB(30,30,30)
-espBtn.Text = "ESP: OFF"
-espBtn.TextColor3 = Color3.fromRGB(255,255,255)
-espBtn.TextSize = 18
-espBtn.Font = Enum.Font.GothamSemibold
-espBtn.TextXAlignment = Enum.TextXAlignment.Left
-espBtn.Parent = frame
-Instance.new("UICorner",espBtn).CornerRadius = UDim.new(0,10)
-
-local espBox = Instance.new("Frame",espBtn)
-espBox.Size = UDim2.new(0,32,0,32)
-espBox.Position = UDim2.new(1,-48,0.5,-16)
-espBox.BackgroundColor3 = Color3.fromRGB(100,100,100)
-Instance.new("UICorner",espBox).CornerRadius = UDim.new(0,6)
-
--- Distancia ESP
-local distLabel = Instance.new("TextLabel")
-distLabel.Size = UDim2.new(0.9,0,0,25)
-distLabel.Position = UDim2.new(0.05,0,0.48,0)
-distLabel.BackgroundTransparency = 1
-distLabel.Text = "Distancia ESP: 500 studs"
-distLabel.TextColor3 = Color3.fromRGB(200,200,255)
-distLabel.TextSize = 16
-distLabel.Font = Enum.Font.Gotham
-distLabel.Parent = frame
-
-local btnCorta = Instance.new("TextButton")
-btnCorta.Size = UDim2.new(0.27,0,0,35) btnCorta.Position = UDim2.new(0.04,0,0.57,0)
-btnCorta.BackgroundColor3 = Color3.fromRGB(40,40,50) btnCorta.Text = "Corta (200)"
-btnCorta.TextColor3 = Color3.fromRGB(255,255,255) btnCorta.TextSize = 14 btnCorta.Font = Enum.Font.Gotham
-btnCorta.Parent = frame Instance.new("UICorner",btnCorta).CornerRadius = UDim.new(0,8)
-
-local btnMedia = Instance.new("TextButton")
-btnMedia.Size = UDim2.new(0.27,0,0,35) btnMedia.Position = UDim2.new(0.365,0,0.57,0)
-btnMedia.BackgroundColor3 = Color3.fromRGB(40,40,50) btnMedia.Text = "Media (500)"
-btnMedia.TextColor3 = Color3.fromRGB(255,255,255) btnMedia.TextSize = 14 btnMedia.Font = Enum.Font.Gotham
-btnMedia.Parent = frame Instance.new("UICorner",btnMedia).CornerRadius = UDim.new(0,8)
-
-local btnLarga = Instance.new("TextButton")
-btnLarga.Size = UDim2.new(0.27,0,0,35) btnLarga.Position = UDim2.new(0.69,0,0.57,0)
-btnLarga.BackgroundColor3 = Color3.fromRGB(40,40,50) btnLarga.Text = "Larga (1000)"
-btnLarga.TextColor3 = Color3.fromRGB(255,255,255) btnLarga.TextSize = 14 btnLarga.Font = Enum.Font.Gotham
-btnLarga.Parent = frame Instance.new("UICorner",btnLarga).CornerRadius = UDim.new(0,8)
-
--- Suavidad
-local smoothLabel = Instance.new("TextLabel")
-smoothLabel.Size = UDim2.new(0.9,0,0,25) smoothLabel.Position = UDim2.new(0.05,0,0.71,0)
-smoothLabel.BackgroundTransparency = 1
-smoothLabel.Text = "Suavidad Aimlock: 0.25"
-smoothLabel.TextColor3 = Color3.fromRGB(200,200,255)
-smoothLabel.TextSize = 16 smoothLabel.Font = Enum.Font.Gotham
-smoothLabel.Parent = frame
-
-local btnFuerte = Instance.new("TextButton")
-btnFuerte.Size = UDim2.new(0.42,0,0,35) btnFuerte.Position = UDim2.new(0.04,0,0.80,0)
-btnFuerte.BackgroundColor3 = Color3.fromRGB(40,40,50) btnFuerte.Text = "Mas Fuerte"
-btnFuerte.TextColor3 = Color3.fromRGB(255,255,255) btnFuerte.TextSize = 14 btnFuerte.Font = Enum.Font.Gotham
-btnFuerte.Parent = frame Instance.new("UICorner",btnFuerte).CornerRadius = UDim.new(0,8)
-
-local btnSuave = Instance.new("TextButton")
-btnSuave.Size = UDim2.new(0.42,0,0,35) btnSuave.Position = UDim2.new(0.50,0,0.80,0)
-btnSuave.BackgroundColor3 = Color3.fromRGB(40,40,50) btnSuave.Text = "Mas Suave"
-btnSuave.TextColor3 = Color3.fromRGB(255,255,255) btnSuave.TextSize = 14 btnSuave.Font = Enum.Font.Gotham
-btnSuave.Parent = frame Instance.new("UICorner",btnSuave).CornerRadius = UDim.new(0,8)
-
--- Fast Pickup
-local fastBtn = Instance.new("TextButton")
-fastBtn.Size = UDim2.new(0.92,0,0,45)
-fastBtn.Position = UDim2.new(0.04,0,0.89,0)
-fastBtn.BackgroundColor3 = Color3.fromRGB(30,30,30)
-fastBtn.Text = "LEVANTADO RAPIDO: OFF"
-fastBtn.TextColor3 = Color3.fromRGB(255,255,255)
-fastBtn.TextSize = 18
-fastBtn.Font = Enum.Font.GothamSemibold
-fastBtn.TextXAlignment = Enum.TextXAlignment.Left
-fastBtn.Parent = frame
-Instance.new("UICorner",fastBtn).CornerRadius = UDim.new(0,10)
-
-local fastBox = Instance.new("Frame",fastBtn)
-fastBox.Size = UDim2.new(0,32,0,32)
-fastBox.Position = UDim2.new(1,-48,0.5,-16)
-fastBox.BackgroundColor3 = Color3.fromRGB(100,100,100)
-Instance.new("UICorner",fastBox).CornerRadius = UDim.new(0,6)
-
--- ==================== FUNCIONES DE BOTONES ====================
-local function updateButtons()
-	aimBtn.Text = aimlockEnabled and "AIMLOCK: ON" or "AIMLOCK: OFF"
-	aimBox.BackgroundColor3 = aimlockEnabled and Color3.fromRGB(0,220,100) or Color3.fromRGB(100,100,100)
-	
-	espBtn.Text = espEnabled and "ESP: ON" or "ESP: OFF"
-	espBox.BackgroundColor3 = espEnabled and Color3.fromRGB(0,220,100) or Color3.fromRGB(100,100,100)
-	
-	fastBtn.Text = fastPickupEnabled and "LEVANTADO RAPIDO: ON" or "LEVANTADO RAPIDO: OFF"
-	fastBox.BackgroundColor3 = fastPickupEnabled and Color3.fromRGB(0,220,100) or Color3.fromRGB(100,100,100)
+local function startAntiTaser()
+	if antiTaserLoop then antiTaserLoop:Disconnect() end
+	antiTaserLoop = RunService.RenderStepped:Connect(function()
+		local char = player.Character
+		if char then
+			local hum = char:FindFirstChild("Humanoid")
+			if hum then
+				hum.PlatformStand = false
+				hum.Sit = false
+				hum:ChangeState(Enum.HumanoidStateType.Running)
+			end
+		end
+	end)
 end
 
-aimBtn.MouseButton1Click:Connect(function() aimlockEnabled = not aimlockEnabled updateButtons() end)
-espBtn.MouseButton1Click:Connect(function() espEnabled = not espEnabled updateButtons() end)
+local function stopAntiTaser()
+	if antiTaserLoop then
+		antiTaserLoop:Disconnect()
+		antiTaserLoop = nil
+	end
+end
 
-fastBtn.MouseButton1Click:Connect(function()
-	fastPickupEnabled = not fastPickupEnabled
-	updateButtons()
-	if fastPickupEnabled then
-		enableFastPickup()
-		if not pickupConnection then
-			pickupConnection = workspace.DescendantAdded:Connect(function(c)
-				if c:IsA("ProximityPrompt") then c.HoldDuration = 0 end
-			end)
-		end
+-- ==================== KEY SYSTEM CON DRAG ====================
+local keyGUI = Instance.new("ScreenGui")
+keyGUI.ResetOnSpawn = false
+keyGUI.Parent = player:WaitForChild("PlayerGui")
+
+local keyFrame = Instance.new("Frame")
+keyFrame.Size = UDim2.new(0, 400, 0, 220)
+keyFrame.Position = UDim2.new(0.5, -200, 0.4, 0)
+keyFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 20)
+keyFrame.Parent = keyGUI
+
+Instance.new("UICorner", keyFrame).CornerRadius = UDim.new(0, 12)
+Instance.new("UIStroke", keyFrame).Color = Color3.fromRGB(80, 80, 255)
+Instance.new("UIStroke", keyFrame).Thickness = 2
+
+local keyTitle = Instance.new("TextLabel")
+keyTitle.Size = UDim2.new(1, 0, 0, 50)
+keyTitle.BackgroundTransparency = 1
+keyTitle.Text = "Introduce la Key"
+keyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyTitle.TextSize = 24
+keyTitle.Font = Enum.Font.GothamBold
+keyTitle.Parent = keyFrame
+
+local keyBox = Instance.new("TextBox")
+keyBox.Size = UDim2.new(0.8, 0, 0, 50)
+keyBox.Position = UDim2.new(0.1, 0, 0.4, 0)
+keyBox.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+keyBox.Text = ""
+keyBox.PlaceholderText = "Ingresa la key aquí..."
+keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyBox.TextSize = 20
+keyBox.Font = Enum.Font.Gotham
+keyBox.Parent = keyFrame
+Instance.new("UICorner", keyBox).CornerRadius = UDim.new(0, 8)
+
+local keyButton = Instance.new("TextButton")
+keyButton.Size = UDim2.new(0.8, 0, 0, 50)
+keyButton.Position = UDim2.new(0.1, 0, 0.68, 0)
+keyButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+keyButton.Text = "Acceder"
+keyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyButton.TextSize = 22
+keyButton.Font = Enum.Font.GothamBold
+keyButton.Parent = keyFrame
+Instance.new("UICorner", keyButton).CornerRadius = UDim.new(0, 8)
+
+local keyStatus = Instance.new("TextLabel")
+keyStatus.Size = UDim2.new(1, 0, 0, 30)
+keyStatus.Position = UDim2.new(0, 0, 1, -35)
+keyStatus.BackgroundTransparency = 1
+keyStatus.Text = ""
+keyStatus.TextSize = 18
+keyStatus.Font = Enum.Font.Gotham
+keyStatus.Parent = keyFrame
+
+-- DRAG PARA KEY (móvil y PC)
+local draggingKey = false
+local dragStartKey, startPosKey
+
+keyTitle.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		draggingKey = true
+		dragStartKey = input.Position
+		startPosKey = keyFrame.Position
+	end
+end)
+
+keyTitle.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		draggingKey = false
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if draggingKey and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+		local delta = input.Position - dragStartKey
+		keyFrame.Position = UDim2.new(startPosKey.X.Scale, startPosKey.X.Offset + delta.X, startPosKey.Y.Scale, startPosKey.Y.Offset + delta.Y)
+	end
+end)
+
+-- PROCESAR KEY
+keyButton.MouseButton1Click:Connect(function()
+	if keyBox.Text == "4fpgp15k" then
+		keyStatus.Text = "Comprobando key..."
+		keyStatus.TextColor3 = Color3.fromRGB(255, 200, 0)
+		keyButton.Text = "Comprobando..."
+		
+		task.wait(2)
+		
+		keyStatus.Text = "Acceso otorgado"
+		keyStatus.TextColor3 = Color3.fromRGB(0, 255, 100)
+		
+		task.wait(1)
+		
+		keyGUI:Destroy()
+		createMainMenu()
 	else
-		if pickupConnection then pickupConnection:Disconnect() pickupConnection = nil end
-		disableFastPickup()
+		keyStatus.Text = "Key incorrecta"
+		keyStatus.TextColor3 = Color3.fromRGB(255, 80, 80)
+		task.wait(1.5)
+		keyStatus.Text = ""
 	end
 end)
 
-btnCorta.MouseButton1Click:Connect(function() MAX_ESP_DISTANCE = 200 distLabel.Text = "Distancia ESP: 200 studs" end)
-btnMedia.MouseButton1Click:Connect(function() MAX_ESP_DISTANCE = 500 distLabel.Text = "Distancia ESP: 500 studs" end)
-btnLarga.MouseButton1Click:Connect(function() MAX_ESP_DISTANCE = 1000 distLabel.Text = "Distancia ESP: 1000 studs" end)
-
-btnFuerte.MouseButton1Click:Connect(function()
-	aimSmoothness = math.clamp(aimSmoothness - 0.05, 0.05, 0.95)
-	smoothLabel.Text = "Suavidad Aimlock: " .. string.format("%.2f", aimSmoothness)
-end)
-
-btnSuave.MouseButton1Click:Connect(function()
-	aimSmoothness = math.clamp(aimSmoothness + 0.05, 0.05, 0.95)
-	smoothLabel.Text = "Suavidad Aimlock: " .. string.format("%.2f", aimSmoothness)
-end)
-
--- Arrastrar menú
-local dragging, dragStart, startPos = false
-title.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging=true dragStart=i.Position startPos=frame.Position end end)
-title.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging=false end end)
-UserInputService.InputChanged:Connect(function(i)
-	if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then
-		local delta = i.Position - dragStart
-		frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+-- ==================== MENÚ PRINCIPAL CON VALORES VISIBLES ====================
+function createMainMenu()
+	local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+	
+	local sg = Instance.new("ScreenGui")
+	sg.ResetOnSpawn = false
+	sg.Parent = player:WaitForChild("PlayerGui")
+	
+	local mainFrame = Instance.new("Frame")
+	mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	mainFrame.BorderSizePixel = 0
+	if isMobile then
+		mainFrame.Size = UDim2.new(0, 520, 0, 340)
+		mainFrame.Position = UDim2.new(0.5, -260, 0.3, 0)
+	else
+		mainFrame.Size = UDim2.new(0, 680, 0, 400)
+		mainFrame.Position = UDim2.new(0.5, -340, 0.3, 0)
 	end
-end)
-
--- Tecla K
-UserInputService.InputBegan:Connect(function(i,gp)
-	if gp then return end
-	if i.KeyCode == Enum.KeyCode.K then
-		frame.Visible = not frame.Visible
+	mainFrame.Parent = sg
+	
+	Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
+	Instance.new("UIStroke", mainFrame).Color = Color3.fromRGB(80, 80, 255)
+	Instance.new("UIStroke", mainFrame).Thickness = 2.5
+	
+	local originalSize = mainFrame.Size
+	local minimized = false
+	
+	local title = Instance.new("TextLabel")
+	title.Size = UDim2.new(0.75, 0, 0, 40)
+	title.Position = UDim2.new(0.05, 0, 0.03, 0)
+	title.BackgroundTransparency = 1
+	title.Text = "AIMLOCK + ESP - Emergency Hamburg"
+	title.TextColor3 = Color3.fromRGB(255, 255, 255)
+	title.TextSize = 22
+	title.Font = Enum.Font.GothamBold
+	title.Parent = mainFrame
+	
+	local minimizeBtn = Instance.new("TextButton")
+	minimizeBtn.Size = UDim2.new(0, 40, 0, 40)
+	minimizeBtn.Position = UDim2.new(1, -50, 0, 5)
+	minimizeBtn.BackgroundTransparency = 1
+	minimizeBtn.Text = "−"
+	minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	minimizeBtn.TextSize = 32
+	minimizeBtn.Font = Enum.Font.GothamBold
+	minimizeBtn.Parent = mainFrame
+	Instance.new("UICorner", minimizeBtn).CornerRadius = UDim.new(0, 8)
+	
+	local scrollFrame = Instance.new("ScrollingFrame")
+	scrollFrame.Size = UDim2.new(1, -20, 1, -70)
+	scrollFrame.Position = UDim2.new(0, 10, 0, 55)
+	scrollFrame.BackgroundTransparency = 1
+	scrollFrame.ScrollBarThickness = 6
+	scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(80, 80, 255)
+	scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+	scrollFrame.Parent = mainFrame
+	
+	local content = Instance.new("Frame")
+	content.BackgroundTransparency = 1
+	content.Size = UDim2.new(1, 0, 0, 0)
+	content.Parent = scrollFrame
+	
+	local list = Instance.new("UIListLayout")
+	list.Padding = UDim.new(0, 15)
+	list.SortOrder = Enum.SortOrder.LayoutOrder
+	list.Parent = content
+	
+	-- ==================== LABELS CON VALORES ACTUALES ====================
+	local espDistLabel = Instance.new("TextLabel")
+	espDistLabel.Size = UDim2.new(0.9, 0, 0, 25)
+	espDistLabel.BackgroundTransparency = 1
+	espDistLabel.Text = "Distancia ESP: 500 studs"
+	espDistLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+	espDistLabel.TextSize = 16
+	espDistLabel.Font = Enum.Font.Gotham
+	espDistLabel.LayoutOrder = 4
+	espDistLabel.Parent = content
+	
+	local aimDistLabel = Instance.new("TextLabel")
+	aimDistLabel.Size = UDim2.new(0.9, 0, 0, 25)
+	aimDistLabel.BackgroundTransparency = 1
+	aimDistLabel.Text = "Distancia AIMLOCK: 300 studs"
+	aimDistLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+	aimDistLabel.TextSize = 16
+	aimDistLabel.Font = Enum.Font.Gotham
+	aimDistLabel.LayoutOrder = 8
+	aimDistLabel.Parent = content
+	
+	local smoothLabel = Instance.new("TextLabel")
+	smoothLabel.Size = UDim2.new(0.9, 0, 0, 25)
+	smoothLabel.BackgroundTransparency = 1
+	smoothLabel.Text = "Suavidad Aimlock: 0.25 (0.05 - 0.95)"
+	smoothLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+	smoothLabel.TextSize = 16
+	smoothLabel.Font = Enum.Font.Gotham
+	smoothLabel.LayoutOrder = 12
+	smoothLabel.Parent = content
+	
+	-- Resto de labels y botones
+	local function addLabel(txt, order)
+		local l = Instance.new("TextLabel")
+		l.Size = UDim2.new(0.9, 0, 0, 25)
+		l.BackgroundTransparency = 1
+		l.Text = txt
+		l.TextColor3 = Color3.fromRGB(200, 200, 255)
+		l.TextSize = 16
+		l.Font = Enum.Font.Gotham
+		l.LayoutOrder = order
+		l.Parent = content
 	end
-end)
+	
+	addLabel("Abre/cierra con K (solo PC)", 1)
+	
+	-- AIMLOCK
+	local aimBtn = Instance.new("TextButton")
+	aimBtn.Size = UDim2.new(0.92, 0, 0, 45)
+	aimBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	aimBtn.Text = "AIMLOCK: OFF"
+	aimBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	aimBtn.TextSize = 18
+	aimBtn.Font = Enum.Font.GothamSemibold
+	aimBtn.TextXAlignment = Enum.TextXAlignment.Left
+	aimBtn.LayoutOrder = 2
+	aimBtn.Parent = content
+	Instance.new("UICorner", aimBtn).CornerRadius = UDim.new(0, 10)
+	local aimBox = Instance.new("Frame", aimBtn)
+	aimBox.Size = UDim2.new(0,32,0,32) aimBox.Position = UDim2.new(1,-48,0.5,-16) aimBox.BackgroundColor3 = Color3.fromRGB(100,100,100)
+	Instance.new("UICorner", aimBox).CornerRadius = UDim.new(0,6)
+	
+	-- ESP
+	local espBtn = Instance.new("TextButton")
+	espBtn.Size = UDim2.new(0.92, 0, 0, 45)
+	espBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	espBtn.Text = "ESP: OFF"
+	espBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	espBtn.TextSize = 18
+	espBtn.Font = Enum.Font.GothamSemibold
+	espBtn.TextXAlignment = Enum.TextXAlignment.Left
+	espBtn.LayoutOrder = 3
+	espBtn.Parent = content
+	Instance.new("UICorner", espBtn).CornerRadius = UDim.new(0, 10)
+	local espBox = Instance.new("Frame", espBtn)
+	espBox.Size = UDim2.new(0,32,0,32) espBox.Position = UDim2.new(1,-48,0.5,-16) espBox.BackgroundColor3 = Color3.fromRGB(100,100,100)
+	Instance.new("UICorner", espBox).CornerRadius = UDim.new(0,6)
+	
+	-- Distancia ESP botones
+	local btnCortaESP = Instance.new("TextButton") btnCortaESP.Size = UDim2.new(0.9,0,0,35) btnCortaESP.BackgroundColor3 = Color3.fromRGB(40,40,50) btnCortaESP.Text = "Corta (200)" btnCortaESP.TextColor3 = Color3.fromRGB(255,255,255) btnCortaESP.TextSize = 14 btnCortaESP.Font = Enum.Font.Gotham btnCortaESP.LayoutOrder = 5 btnCortaESP.Parent = content Instance.new("UICorner", btnCortaESP).CornerRadius = UDim.new(0,8)
+	local btnMediaESP = Instance.new("TextButton") btnMediaESP.Size = UDim2.new(0.9,0,0,35) btnMediaESP.BackgroundColor3 = Color3.fromRGB(40,40,50) btnMediaESP.Text = "Media (500)" btnMediaESP.TextColor3 = Color3.fromRGB(255,255,255) btnMediaESP.TextSize = 14 btnMediaESP.Font = Enum.Font.Gotham btnMediaESP.LayoutOrder = 6 btnMediaESP.Parent = content Instance.new("UICorner", btnMediaESP).CornerRadius = UDim.new(0,8)
+	local btnLargaESP = Instance.new("TextButton") btnLargaESP.Size = UDim2.new(0.9,0,0,35) btnLargaESP.BackgroundColor3 = Color3.fromRGB(40,40,50) btnLargaESP.Text = "Larga (1000)" btnLargaESP.TextColor3 = Color3.fromRGB(255,255,255) btnLargaESP.TextSize = 14 btnLargaESP.Font = Enum.Font.Gotham btnLargaESP.LayoutOrder = 7 btnLargaESP.Parent = content Instance.new("UICorner", btnLargaESP).CornerRadius = UDim.new(0,8)
+	
+	-- Distancia AIMLOCK botones
+	local btnCortaAim = Instance.new("TextButton") btnCortaAim.Size = UDim2.new(0.9,0,0,35) btnCortaAim.BackgroundColor3 = Color3.fromRGB(40,40,50) btnCortaAim.Text = "Corta (100)" btnCortaAim.TextColor3 = Color3.fromRGB(255,255,255) btnCortaAim.TextSize = 14 btnCortaAim.Font = Enum.Font.Gotham btnCortaAim.LayoutOrder = 9 btnCortaAim.Parent = content Instance.new("UICorner", btnCortaAim).CornerRadius = UDim.new(0,8)
+	local btnMediaAim = Instance.new("TextButton") btnMediaAim.Size = UDim2.new(0.9,0,0,35) btnMediaAim.BackgroundColor3 = Color3.fromRGB(40,40,50) btnMediaAim.Text = "Media (300)" btnMediaAim.TextColor3 = Color3.fromRGB(255,255,255) btnMediaAim.TextSize = 14 btnMediaAim.Font = Enum.Font.Gotham btnMediaAim.LayoutOrder = 10 btnMediaAim.Parent = content Instance.new("UICorner", btnMediaAim).CornerRadius = UDim.new(0,8)
+	local btnLargaAim = Instance.new("TextButton") btnLargaAim.Size = UDim2.new(0.9,0,0,35) btnLargaAim.BackgroundColor3 = Color3.fromRGB(40,40,50) btnLargaAim.Text = "Larga (500)" btnLargaAim.TextColor3 = Color3.fromRGB(255,255,255) btnLargaAim.TextSize = 14 btnLargaAim.Font = Enum.Font.Gotham btnLargaAim.LayoutOrder = 11 btnLargaAim.Parent = content Instance.new("UICorner", btnLargaAim).CornerRadius = UDim.new(0,8)
+	
+	-- Suavidad botones
+	local btnFuerte = Instance.new("TextButton") btnFuerte.Size = UDim2.new(0.9,0,0,35) btnFuerte.BackgroundColor3 = Color3.fromRGB(40,40,50) btnFuerte.Text = "Mas Fuerte" btnFuerte.TextColor3 = Color3.fromRGB(255,255,255) btnFuerte.TextSize = 14 btnFuerte.Font = Enum.Font.Gotham btnFuerte.LayoutOrder = 13 btnFuerte.Parent = content Instance.new("UICorner", btnFuerte).CornerRadius = UDim.new(0,8)
+	local btnSuave = Instance.new("TextButton") btnSuave.Size = UDim2.new(0.9,0,0,35) btnSuave.BackgroundColor3 = Color3.fromRGB(40,40,50) btnSuave.Text = "Mas Suave" btnSuave.TextColor3 = Color3.fromRGB(255,255,255) btnSuave.TextSize = 14 btnSuave.Font = Enum.Font.Gotham btnSuave.LayoutOrder = 14 btnSuave.Parent = content Instance.new("UICorner", btnSuave).CornerRadius = UDim.new(0,8)
+	
+	-- Levantado rapido
+	local fastBtn = Instance.new("TextButton")
+	fastBtn.Size = UDim2.new(0.92, 0, 0, 45)
+	fastBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	fastBtn.Text = "LEVANTADO RAPIDO: OFF"
+	fastBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	fastBtn.TextSize = 18
+	fastBtn.Font = Enum.Font.GothamSemibold
+	fastBtn.TextXAlignment = Enum.TextXAlignment.Left
+	fastBtn.LayoutOrder = 15
+	fastBtn.Parent = content
+	Instance.new("UICorner", fastBtn).CornerRadius = UDim.new(0, 10)
+	local fastBox = Instance.new("Frame", fastBtn)
+	fastBox.Size = UDim2.new(0,32,0,32) fastBox.Position = UDim2.new(1,-48,0.5,-16) fastBox.BackgroundColor3 = Color3.fromRGB(100,100,100)
+	Instance.new("UICorner", fastBox).CornerRadius = UDim.new(0,6)
+	
+	-- Anti Taser
+	local antiTaserBtn = Instance.new("TextButton")
+	antiTaserBtn.Size = UDim2.new(0.92, 0, 0, 45)
+	antiTaserBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	antiTaserBtn.Text = "ANTI TASER: OFF"
+	antiTaserBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	antiTaserBtn.TextSize = 18
+	antiTaserBtn.Font = Enum.Font.GothamSemibold
+	antiTaserBtn.TextXAlignment = Enum.TextXAlignment.Left
+	antiTaserBtn.LayoutOrder = 16
+	antiTaserBtn.Parent = content
+	Instance.new("UICorner", antiTaserBtn).CornerRadius = UDim.new(0, 10)
+	local antiBox = Instance.new("Frame", antiTaserBtn)
+	antiBox.Size = UDim2.new(0,32,0,32) antiBox.Position = UDim2.new(1,-48,0.5,-16) antiBox.BackgroundColor3 = Color3.fromRGB(100,100,100)
+	Instance.new("UICorner", antiBox).CornerRadius = UDim.new(0,6)
+	
+	-- ==================== ACTUALIZAR LABELS CON VALORES ====================
+	local function updateValueLabels()
+		espDistLabel.Text = "Distancia ESP: " .. MAX_ESP_DISTANCE .. " studs"
+		aimDistLabel.Text = "Distancia AIMLOCK: " .. MAX_AIM_DISTANCE .. " studs"
+		smoothLabel.Text = "Suavidad Aimlock: " .. string.format("%.2f", aimSmoothness) .. " (0.05 - 0.95)"
+	end
+	
+	-- ==================== BOTONES ====================
+	local function updateButtons()
+		aimBtn.Text = aimlockEnabled and "AIMLOCK: ON" or "AIMLOCK: OFF"
+		aimBox.BackgroundColor3 = aimlockEnabled and Color3.fromRGB(0,220,100) or Color3.fromRGB(100,100,100)
+		
+		espBtn.Text = espEnabled and "ESP: ON" or "ESP: OFF"
+		espBox.BackgroundColor3 = espEnabled and Color3.fromRGB(0,220,100) or Color3.fromRGB(100,100,100)
+		
+		fastBtn.Text = fastPickupEnabled and "LEVANTADO RAPIDO: ON" or "LEVANTADO RAPIDO: OFF"
+		fastBox.BackgroundColor3 = fastPickupEnabled and Color3.fromRGB(0,220,100) or Color3.fromRGB(100,100,100)
+		
+		antiTaserBtn.Text = antiTaserEnabled and "ANTI TASER: ON" or "ANTI TASER: OFF"
+		antiBox.BackgroundColor3 = antiTaserEnabled and Color3.fromRGB(0,220,100) or Color3.fromRGB(100,100,100)
+	end
+	
+	aimBtn.MouseButton1Click:Connect(function() aimlockEnabled = not aimlockEnabled updateButtons() end)
+	espBtn.MouseButton1Click:Connect(function() espEnabled = not espEnabled updateButtons() end)
+	
+	fastBtn.MouseButton1Click:Connect(function()
+		fastPickupEnabled = not fastPickupEnabled
+		updateButtons()
+		if fastPickupEnabled then enableFastPickup() else disableFastPickup() end
+		if fastPickupEnabled and not pickupConnection then
+			pickupConnection = workspace.DescendantAdded:Connect(function(c) if c:IsA("ProximityPrompt") then c.HoldDuration = 0 end end)
+		elseif not fastPickupEnabled and pickupConnection then
+			pickupConnection:Disconnect() pickupConnection = nil
+		end
+	end)
+	
+	antiTaserBtn.MouseButton1Click:Connect(function()
+		antiTaserEnabled = not antiTaserEnabled
+		updateButtons()
+		if antiTaserEnabled then startAntiTaser() else stopAntiTaser() end
+	end)
+	
+	-- Distancia ESP
+	btnCortaESP.MouseButton1Click:Connect(function() MAX_ESP_DISTANCE = 200 updateValueLabels() end)
+	btnMediaESP.MouseButton1Click:Connect(function() MAX_ESP_DISTANCE = 500 updateValueLabels() end)
+	btnLargaESP.MouseButton1Click:Connect(function() MAX_ESP_DISTANCE = 1000 updateValueLabels() end)
+	
+	-- Distancia AIMLOCK
+	btnCortaAim.MouseButton1Click:Connect(function() MAX_AIM_DISTANCE = 100 updateValueLabels() end)
+	btnMediaAim.MouseButton1Click:Connect(function() MAX_AIM_DISTANCE = 300 updateValueLabels() end)
+	btnLargaAim.MouseButton1Click:Connect(function() MAX_AIM_DISTANCE = 500 updateValueLabels() end)
+	
+	-- Suavidad
+	btnFuerte.MouseButton1Click:Connect(function()
+		aimSmoothness = math.clamp(aimSmoothness - 0.05, 0.05, 0.95)
+		updateValueLabels()
+	end)
+	btnSuave.MouseButton1Click:Connect(function()
+		aimSmoothness = math.clamp(aimSmoothness + 0.05, 0.05, 0.95)
+		updateValueLabels()
+	end)
+	
+	-- Minimizar
+	minimizeBtn.MouseButton1Click:Connect(function()
+		minimized = not minimized
+		if minimized then
+			mainFrame.Size = UDim2.new(0, mainFrame.Size.X.Offset, 0, 60)
+			scrollFrame.Visible = false
+			minimizeBtn.Text = "+"
+		else
+			mainFrame.Size = originalSize
+			scrollFrame.Visible = true
+			minimizeBtn.Text = "−"
+		end
+	end)
+	
+	-- Arrastrar
+	local dragging = false
+	local dragStart, startPos
+	title.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = mainFrame.Position
+		end
+	end)
+	title.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end
+	end)
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+			local delta = input.Position - dragStart
+			mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		end
+	end)
+	
+	-- Tecla K
+	UserInputService.InputBegan:Connect(function(input, gp)
+		if gp then return end
+		if input.KeyCode == Enum.KeyCode.K then
+			mainFrame.Visible = not mainFrame.Visible
+		end
+	end)
+	
+	-- Loop
+	connection = RunService.RenderStepped:Connect(function()
+		updateAimlock()
+		updateESP()
+		if antiTaserEnabled then
+			local char = player.Character
+			if char then
+				local hum = char:FindFirstChild("Humanoid")
+				if hum then
+					hum.PlatformStand = false
+					hum.Sit = false
+					hum:ChangeState(Enum.HumanoidStateType.Running)
+				end
+			end
+		end
+	end)
+	
+	for _,p in ipairs(Players:GetPlayers()) do createDrawings(p) end
+	Players.PlayerAdded:Connect(createDrawings)
+	Players.PlayerRemoving:Connect(removeDrawings)
+	
+	updateButtons()
+	updateValueLabels()
+end
 
--- Inicialización
-for _,p in ipairs(Players:GetPlayers()) do createDrawings(p) end
-Players.PlayerAdded:Connect(createDrawings)
-Players.PlayerRemoving:Connect(removeDrawings)
-
-connection = RunService.RenderStepped:Connect(function()
-	updateAimlock()
-	updateESP()
-end)
-
-updateButtons()
-print("✅ Script cargado - Presiona K para abrir el menú")
+print("✅ Script Emergency Hamburg FINAL cargado")
+print("Introduce la key 4fpgp15k para acceder al menú")
