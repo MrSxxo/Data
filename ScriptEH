@@ -9,18 +9,20 @@ local aimlockEnabled = false
 local espEnabled = false
 local fastPickupEnabled = false
 local antiTaserEnabled = false
-local connection = nil
-local pickupConnection = nil
-local antiTaserLoop = nil
 
--- ==================== CONFIG ====================
 local TARGET_PART = "Head"
+local TARGET_FILTER = "Todos"   -- EZ
+
 local MAX_AIM_DISTANCE = 300
 local MAX_ESP_DISTANCE = 500
 local FOV_LIMIT = 120
 local aimSmoothness = 0.25
 
--- ==================== FUNCIONES DEL SCRIPT ====================
+local connection = nil
+local pickupConnection = nil
+local antiTaserLoop = nil
+
+-- ==================== AIMLOCK ====================
 local function getClosestPlayer()
 	local closest, shortest = nil, math.huge
 	local myChar = player.Character
@@ -32,6 +34,13 @@ local function getClosestPlayer()
 		if p ~= player and p.Character and p.Character:FindFirstChild(TARGET_PART) and p.Character:FindFirstChild("Humanoid") then
 			local hum = p.Character.Humanoid
 			if hum.Health > 0 then
+				local teamName = (p.Team and p.Team.Name:lower()) or ""
+				
+				if TARGET_FILTER == "Policías" then
+					if not (teamName:find("polic") or teamName:find("polizei")) then continue end
+				elseif TARGET_FILTER == "Todos" then
+				end
+				
 				local part = p.Character[TARGET_PART]
 				local dist3D = (myChar.HumanoidRootPart.Position - part.Position).Magnitude
 				if dist3D > MAX_AIM_DISTANCE then continue end
@@ -60,6 +69,7 @@ local function updateAimlock()
 	end
 end
 
+-- ==================== ESP ====================
 local drawings = {}
 
 local function getBoxInfo(plr)
@@ -144,9 +154,13 @@ local function updateESP()
 		
 		local teamLower = (plr.Team and plr.Team.Name:lower()) or ""
 		local nameColor = Color3.fromRGB(255,255,255)
-		if teamLower:find("criminal") then nameColor = Color3.fromRGB(255,50,50)
-		elseif teamLower:find("polic") or teamLower:find("polizei") then nameColor = Color3.fromRGB(50,120,255)
-		elseif teamLower:find("civil") or teamLower:find("citizen") then nameColor = Color3.fromRGB(50,255,100) end
+		if teamLower:find("criminal") or teamLower:find("wanted") then
+			nameColor = Color3.fromRGB(255,50,50)
+		elseif teamLower:find("polic") or teamLower:find("polizei") then
+			nameColor = Color3.fromRGB(50,120,255)
+		elseif teamLower:find("civil") or teamLower:find("citizen") then
+			nameColor = Color3.fromRGB(50,255,100)
+		end
 		
 		d.name.Visible = true
 		d.name.Text = plr.DisplayName .. " [" .. math.floor(hum.Health) .. "]"
@@ -217,7 +231,7 @@ Instance.new("UIStroke", keyFrame).Thickness = 2
 local keyTitle = Instance.new("TextLabel")
 keyTitle.Size = UDim2.new(1, 0, 0, 50)
 keyTitle.BackgroundTransparency = 1
-keyTitle.Text = "Introduce la Key/Enter key"
+keyTitle.Text = "Introduce la Key/Enter Key"
 keyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 keyTitle.TextSize = 24
 keyTitle.Font = Enum.Font.GothamBold
@@ -255,10 +269,9 @@ keyStatus.TextSize = 18
 keyStatus.Font = Enum.Font.Gotham
 keyStatus.Parent = keyFrame
 
--- DRAG PARA KEY (móvil y PC)
+-- Drag key (móvil y PC)
 local draggingKey = false
 local dragStartKey, startPosKey
-
 keyTitle.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		draggingKey = true
@@ -266,13 +279,9 @@ keyTitle.InputBegan:Connect(function(input)
 		startPosKey = keyFrame.Position
 	end
 end)
-
 keyTitle.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		draggingKey = false
-	end
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then draggingKey = false end
 end)
-
 UserInputService.InputChanged:Connect(function(input)
 	if draggingKey and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
 		local delta = input.Position - dragStartKey
@@ -280,20 +289,15 @@ UserInputService.InputChanged:Connect(function(input)
 	end
 end)
 
--- PROCESAR KEY
 keyButton.MouseButton1Click:Connect(function()
 	if keyBox.Text == "4fpgp15k" then
 		keyStatus.Text = "Comprobando key..."
 		keyStatus.TextColor3 = Color3.fromRGB(255, 200, 0)
 		keyButton.Text = "Comprobando..."
-		
 		task.wait(2)
-		
 		keyStatus.Text = "Acceso otorgado"
 		keyStatus.TextColor3 = Color3.fromRGB(0, 255, 100)
-		
 		task.wait(2)
-		
 		keyGUI:Destroy()
 		createMainMenu()
 	else
@@ -331,11 +335,23 @@ function createMainMenu()
 	local originalSize = mainFrame.Size
 	local minimized = false
 	
+	-- Créditos
+	local credit = Instance.new("TextLabel")
+	credit.Size = UDim2.new(0, 180, 0, 20)
+	credit.Position = UDim2.new(0, 15, 0, 8)
+	credit.BackgroundTransparency = 1
+	credit.Text = "Creado por MrSxxo"
+	credit.TextColor3 = Color3.fromRGB(0, 255, 200)
+	credit.TextSize = 11
+	credit.Font = Enum.Font.GothamBold
+	credit.TextXAlignment = Enum.TextXAlignment.Left
+	credit.Parent = mainFrame
+	
 	local title = Instance.new("TextLabel")
 	title.Size = UDim2.new(0.75, 0, 0, 40)
 	title.Position = UDim2.new(0.05, 0, 0.03, 0)
 	title.BackgroundTransparency = 1
-	title.Text = "AimLock + ESP - EH v1.0.2"
+	title.Text = "AimLock + ESP - EH v1.0.5"
 	title.TextColor3 = Color3.fromRGB(255, 255, 255)
 	title.TextSize = 22
 	title.Font = Enum.Font.GothamBold
@@ -372,7 +388,62 @@ function createMainMenu()
 	list.SortOrder = Enum.SortOrder.LayoutOrder
 	list.Parent = content
 	
-	-- ==================== LABELS  ====================
+	-- ==================== NUEVAS OPCIONES GRID ====================
+	local function createGrid(titleText, options, currentValue, callback, order)
+		local lbl = Instance.new("TextLabel")
+		lbl.Size = UDim2.new(0.9, 0, 0, 25)
+		lbl.BackgroundTransparency = 1
+		lbl.Text = titleText
+		lbl.TextColor3 = Color3.fromRGB(200, 200, 255)
+		lbl.TextSize = 16
+		lbl.Font = Enum.Font.Gotham
+		lbl.LayoutOrder = order
+		lbl.Parent = content
+		
+		local gridFrame = Instance.new("Frame")
+		gridFrame.Size = UDim2.new(0.9, 0, 0, 50)
+		gridFrame.BackgroundTransparency = 1
+		gridFrame.LayoutOrder = order + 1
+		gridFrame.Parent = content
+		
+		local gridLayout = Instance.new("UIListLayout")
+		gridLayout.FillDirection = Enum.FillDirection.Horizontal
+		gridLayout.Padding = UDim.new(0, 8)
+		gridLayout.Parent = gridFrame
+		
+		local btns = {}
+		for _, opt in ipairs(options) do
+			local btn = Instance.new("TextButton")
+			btn.Size = UDim2.new(0, 110, 0, 45)
+			btn.BackgroundColor3 = (opt == currentValue) and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(40, 40, 50)
+			btn.Text = opt
+			btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+			btn.TextSize = 15
+			btn.Font = Enum.Font.GothamSemibold
+			btn.Parent = gridFrame
+			Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+			
+			btn.MouseButton1Click:Connect(function()
+				callback(opt)
+				for _, b in ipairs(btns) do
+					b.BackgroundColor3 = (b.Text == opt) and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(40, 40, 50)
+				end
+			end)
+			table.insert(btns, btn)
+		end
+	end
+	
+	-- Grid para parte del cuerpo
+	createGrid("Body AIM to", {"Cabeza", "Cuerpo"}, (TARGET_PART == "Head" and "Cabeza" or "Cuerpo"), function(val)
+		TARGET_PART = (val == "Cabeza") and "Head" or "HumanoidRootPart"
+	end, 20)
+	
+	-- Grid para filtro
+	createGrid("Team AIMLOCK", {"Policías", "Todos"}, TARGET_FILTER, function(val)
+		TARGET_FILTER = val
+	end, 22)
+	
+	-- ==================== LABELS Y BOTONES ====================
 	local espDistLabel = Instance.new("TextLabel")
 	espDistLabel.Size = UDim2.new(0.9, 0, 0, 25)
 	espDistLabel.BackgroundTransparency = 1
@@ -403,7 +474,6 @@ function createMainMenu()
 	smoothLabel.LayoutOrder = 12
 	smoothLabel.Parent = content
 	
-	-- Resto de labels y botones
 	local function addLabel(txt, order)
 		local l = Instance.new("TextLabel")
 		l.Size = UDim2.new(0.9, 0, 0, 25)
@@ -450,21 +520,21 @@ function createMainMenu()
 	espBox.Size = UDim2.new(0,32,0,32) espBox.Position = UDim2.new(1,-48,0.5,-16) espBox.BackgroundColor3 = Color3.fromRGB(100,100,100)
 	Instance.new("UICorner", espBox).CornerRadius = UDim.new(0,6)
 	
-	-- Distancia ESP botones
+	-- Distancia ESP
 	local btnCortaESP = Instance.new("TextButton") btnCortaESP.Size = UDim2.new(0.9,0,0,35) btnCortaESP.BackgroundColor3 = Color3.fromRGB(40,40,50) btnCortaESP.Text = "Corta/Close (200)" btnCortaESP.TextColor3 = Color3.fromRGB(255,255,255) btnCortaESP.TextSize = 14 btnCortaESP.Font = Enum.Font.Gotham btnCortaESP.LayoutOrder = 5 btnCortaESP.Parent = content Instance.new("UICorner", btnCortaESP).CornerRadius = UDim.new(0,8)
 	local btnMediaESP = Instance.new("TextButton") btnMediaESP.Size = UDim2.new(0.9,0,0,35) btnMediaESP.BackgroundColor3 = Color3.fromRGB(40,40,50) btnMediaESP.Text = "Media/Medium (500)" btnMediaESP.TextColor3 = Color3.fromRGB(255,255,255) btnMediaESP.TextSize = 14 btnMediaESP.Font = Enum.Font.Gotham btnMediaESP.LayoutOrder = 6 btnMediaESP.Parent = content Instance.new("UICorner", btnMediaESP).CornerRadius = UDim.new(0,8)
 	local btnLargaESP = Instance.new("TextButton") btnLargaESP.Size = UDim2.new(0.9,0,0,35) btnLargaESP.BackgroundColor3 = Color3.fromRGB(40,40,50) btnLargaESP.Text = "Larga/Extreme (1000)" btnLargaESP.TextColor3 = Color3.fromRGB(255,255,255) btnLargaESP.TextSize = 14 btnLargaESP.Font = Enum.Font.Gotham btnLargaESP.LayoutOrder = 7 btnLargaESP.Parent = content Instance.new("UICorner", btnLargaESP).CornerRadius = UDim.new(0,8)
 	
-	-- Distancia AIMLOCK botones
+	-- Distancia AIMLOCK
 	local btnCortaAim = Instance.new("TextButton") btnCortaAim.Size = UDim2.new(0.9,0,0,35) btnCortaAim.BackgroundColor3 = Color3.fromRGB(40,40,50) btnCortaAim.Text = "Corta/Close (100)" btnCortaAim.TextColor3 = Color3.fromRGB(255,255,255) btnCortaAim.TextSize = 14 btnCortaAim.Font = Enum.Font.Gotham btnCortaAim.LayoutOrder = 9 btnCortaAim.Parent = content Instance.new("UICorner", btnCortaAim).CornerRadius = UDim.new(0,8)
 	local btnMediaAim = Instance.new("TextButton") btnMediaAim.Size = UDim2.new(0.9,0,0,35) btnMediaAim.BackgroundColor3 = Color3.fromRGB(40,40,50) btnMediaAim.Text = "Media/Medium (300)" btnMediaAim.TextColor3 = Color3.fromRGB(255,255,255) btnMediaAim.TextSize = 14 btnMediaAim.Font = Enum.Font.Gotham btnMediaAim.LayoutOrder = 10 btnMediaAim.Parent = content Instance.new("UICorner", btnMediaAim).CornerRadius = UDim.new(0,8)
 	local btnLargaAim = Instance.new("TextButton") btnLargaAim.Size = UDim2.new(0.9,0,0,35) btnLargaAim.BackgroundColor3 = Color3.fromRGB(40,40,50) btnLargaAim.Text = "Larga/Extreme (500)" btnLargaAim.TextColor3 = Color3.fromRGB(255,255,255) btnLargaAim.TextSize = 14 btnLargaAim.Font = Enum.Font.Gotham btnLargaAim.LayoutOrder = 11 btnLargaAim.Parent = content Instance.new("UICorner", btnLargaAim).CornerRadius = UDim.new(0,8)
 	
-	-- Suavidad botones
+	-- Suavidad
 	local btnFuerte = Instance.new("TextButton") btnFuerte.Size = UDim2.new(0.9,0,0,35) btnFuerte.BackgroundColor3 = Color3.fromRGB(40,40,50) btnFuerte.Text = "Fuerte/Strong" btnFuerte.TextColor3 = Color3.fromRGB(255,255,255) btnFuerte.TextSize = 14 btnFuerte.Font = Enum.Font.Gotham btnFuerte.LayoutOrder = 13 btnFuerte.Parent = content Instance.new("UICorner", btnFuerte).CornerRadius = UDim.new(0,8)
 	local btnSuave = Instance.new("TextButton") btnSuave.Size = UDim2.new(0.9,0,0,35) btnSuave.BackgroundColor3 = Color3.fromRGB(40,40,50) btnSuave.Text = "Suave/Soft" btnSuave.TextColor3 = Color3.fromRGB(255,255,255) btnSuave.TextSize = 14 btnSuave.Font = Enum.Font.Gotham btnSuave.LayoutOrder = 14 btnSuave.Parent = content Instance.new("UICorner", btnSuave).CornerRadius = UDim.new(0,8)
 	
-	-- Levantado rapido
+	-- Fast Collect
 	local fastBtn = Instance.new("TextButton")
 	fastBtn.Size = UDim2.new(0.92, 0, 0, 45)
 	fastBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -496,24 +566,20 @@ function createMainMenu()
 	antiBox.Size = UDim2.new(0,32,0,32) antiBox.Position = UDim2.new(1,-48,0.5,-16) antiBox.BackgroundColor3 = Color3.fromRGB(100,100,100)
 	Instance.new("UICorner", antiBox).CornerRadius = UDim.new(0,6)
 	
-	-- ==================== ACTUALIZAR LABELS ====================
+	-- ==================== ACTUALIZAR ====================
 	local function updateValueLabels()
 		espDistLabel.Text = "Distancia/Distance ESP: " .. MAX_ESP_DISTANCE .. " studs"
 		aimDistLabel.Text = "Distancia/Distance AIMLOCK: " .. MAX_AIM_DISTANCE .. " studs"
 		smoothLabel.Text = "Suavidad/Soft Aimlock: " .. string.format("%.2f", aimSmoothness) .. " (0.05 - 0.95)"
 	end
 	
-	-- ==================== BOTONES ====================
 	local function updateButtons()
 		aimBtn.Text = aimlockEnabled and "AIMLOCK: ON" or "AIMLOCK: OFF"
 		aimBox.BackgroundColor3 = aimlockEnabled and Color3.fromRGB(0,220,100) or Color3.fromRGB(100,100,100)
-		
 		espBtn.Text = espEnabled and "ESP: ON" or "ESP: OFF"
 		espBox.BackgroundColor3 = espEnabled and Color3.fromRGB(0,220,100) or Color3.fromRGB(100,100,100)
-		
 		fastBtn.Text = fastPickupEnabled and "Fast Collect: ON" or "Fast Collect: OFF"
 		fastBox.BackgroundColor3 = fastPickupEnabled and Color3.fromRGB(0,220,100) or Color3.fromRGB(100,100,100)
-		
 		antiTaserBtn.Text = antiTaserEnabled and "ANTI TASER: ON" or "ANTI TASER: OFF"
 		antiBox.BackgroundColor3 = antiTaserEnabled and Color3.fromRGB(0,220,100) or Color3.fromRGB(100,100,100)
 	end
@@ -538,17 +604,14 @@ function createMainMenu()
 		if antiTaserEnabled then startAntiTaser() else stopAntiTaser() end
 	end)
 	
-	-- Distancia ESP
 	btnCortaESP.MouseButton1Click:Connect(function() MAX_ESP_DISTANCE = 200 updateValueLabels() end)
 	btnMediaESP.MouseButton1Click:Connect(function() MAX_ESP_DISTANCE = 500 updateValueLabels() end)
 	btnLargaESP.MouseButton1Click:Connect(function() MAX_ESP_DISTANCE = 1000 updateValueLabels() end)
 	
-	-- Distancia AIMLOCK
 	btnCortaAim.MouseButton1Click:Connect(function() MAX_AIM_DISTANCE = 100 updateValueLabels() end)
 	btnMediaAim.MouseButton1Click:Connect(function() MAX_AIM_DISTANCE = 300 updateValueLabels() end)
 	btnLargaAim.MouseButton1Click:Connect(function() MAX_AIM_DISTANCE = 500 updateValueLabels() end)
 	
-	-- Suavidad
 	btnFuerte.MouseButton1Click:Connect(function()
 		aimSmoothness = math.clamp(aimSmoothness - 0.05, 0.05, 0.95)
 		updateValueLabels()
@@ -592,7 +655,6 @@ function createMainMenu()
 		end
 	end)
 	
-	-- Tecla K
 	UserInputService.InputBegan:Connect(function(input, gp)
 		if gp then return end
 		if input.KeyCode == Enum.KeyCode.K then
@@ -600,7 +662,6 @@ function createMainMenu()
 		end
 	end)
 	
-	-- Loop
 	connection = RunService.RenderStepped:Connect(function()
 		updateAimlock()
 		updateESP()
@@ -624,3 +685,5 @@ function createMainMenu()
 	updateButtons()
 	updateValueLabels()
 end
+
+print("✅ Script Emergency Hamburg v1.0.5 cargado")
