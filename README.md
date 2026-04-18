@@ -1,4 +1,41 @@
-Bienvenido al script de EH Legal.
-Como funciona?
-Es un script legal diseñado y creado originalmente para Emergency Hamburg Roblox, este script te ofrece muchas funciones legales y te da ventajas para mejorar y ser mejor en Emergency Hamburg sin preocuparse por baneos, claro, asegúrate de disimular. Más información del script en mi servidor de discord.
-• Servidor de Discord: https://discord.gg/6ja6SejfKv
+# EH Legal Script
+
+![Version](https://img.shields.io/badge/Versión-V1.0.22-blue)
+![Estado](https://img.shields.io/badge/Estado-Activo-brightgreen)
+  
+
+📌 Descripción
+- EH Legal es un script totalmente legal, diseñado y creado originalmente para Emergency Hamburg en Roblox.  
+Su objetivo es ofrecer funciones permitidas que mejoran tu experiencia dentro del juego sin violar las reglas ni arriesgar tu cuenta.
+
+- Este script te proporciona herramientas útiles para mejorar tu rendimiento y ayudarte a ser más eficiente dentro de Emergency Hamburg.  
+Aun así, recuerda siempre jugar con discreción.
+
+---
+
+❓ ¿Cómo funciona?
+- El script incluye funciones legales que te brindan ventajas dentro del juego sin infringir los Términos de Servicio de Roblox. 
+- Es una herramienta segura siempre que se use con responsabilidad.
+
+- Más información, soporte y actualizaciones están disponibles en mi servidor de Discord.
+
+---
+
+🔗 Enlaces
+- Servidor de Discord: [Discord](https://discord.gg/6ja6SejfKv)
+
+---
+
+Características
+- Totalmente legal
+- Optimizado para Emergency Hamburg  
+- Funciones útiles para mejorar tu experiencia  
+- Actualizaciones frecuentes  
+- Seguro para tu cuenta si se usa correctamente  
+
+---
+
+📜 Licencia
+- Este script es de uso exclusivo dentro de la comunidad autorizada.  
+- No se permite redistribuir, vender o modificar sin permiso del autor.
+- No se permite compartir Licencia ni redistribuir el script fuera de mi servidor de discord.
