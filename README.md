@@ -1,6 +1,6 @@
 # EH Legal Script
 
-![Version](https://img.shields.io/badge/Versión-V1.0.22-blue)
+![Version](https://img.shields.io/badge/Versión-V1.0.26-blue)
 ![Estado](https://img.shields.io/badge/Estado-Activo-brightgreen)
   
 
