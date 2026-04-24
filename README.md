@@ -1,11 +1,11 @@
-# EH Legal Script
+# Legal | X Systems
 
 ![Version](https://img.shields.io/badge/Versión-V1.0.26-blue)
 ![Estado](https://img.shields.io/badge/Estado-Activo-brightgreen)
   
 
 📌 Descripción
-- EH Legal es un script totalmente legal, diseñado y creado originalmente para Emergency Hamburg en Roblox.  
+- Legal | X Systems es un script totalmente legal, diseñado y creado originalmente para Emergency Hamburg en Roblox.  
 Su objetivo es ofrecer funciones permitidas que mejoran tu experiencia dentro del juego sin violar las reglas ni arriesgar tu cuenta.
 
 - Este script te proporciona herramientas útiles para mejorar tu rendimiento y ayudarte a ser más eficiente dentro de Emergency Hamburg.  
