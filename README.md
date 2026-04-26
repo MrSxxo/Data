@@ -39,3 +39,15 @@ Características
 - Este script es de uso exclusivo dentro de la comunidad autorizada.  
 - No se permite redistribuir, vender o modificar sin permiso del autor.
 - No se permite compartir Licencia ni redistribuir el script fuera de mi servidor de discord.
+
+- ---
+
+# FAST FLAGS Y OTROS SCRIPTS
+
+![Estado](https://img.shields.io/badge/Estado-Activo-brightgreen)
+
+---
+
+- Las fflags son totalmente legal y solo aplican texturas.
+- Solo se usan para mejorar el rendimiento y mejorar fps, 
+- puedes unirte a mi servidor de discord para mas informacio, cuenta con multiples archivos para personalizacion y estetetica en tu juego.
