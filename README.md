@@ -1,6 +1,6 @@
 # Legal | X Systems
 
-![Version](https://img.shields.io/badge/Versión-V1.0.35-blue)
+![Version](https://img.shields.io/badge/Versión-V1.0.35++-blue)
 ![Estado](https://img.shields.io/badge/Estado-Activo-brightgreen)
   
 
