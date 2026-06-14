@@ -1,6 +1,6 @@
 # Legal | X Systems
 
-![Version](https://img.shields.io/badge/Versión-V1.0.40-blue)
+![Version](https://img.shields.io/badge/Versión-V1.0.42-blue)
 ![Estado](https://img.shields.io/badge/Estado-Activo-brightgreen)
   
 
@@ -49,5 +49,5 @@ Características
 ---
 
 - Las fflags son totalmente legal y solo aplican texturas.
-- Solo se usan para mejorar el rendimiento y mejorar fps, 
-- puedes unirte a mi servidor de discord para mas información, cuenta con multiples archivos para personalizacion y estetetica en tu juego.
+- Solo se usan para mejorar el rendimiento y mejorar fps.
+- Puedes unirte a mi servidor de discord para mas información, cuenta con multiples archivos para personalizacion y estetetica en tu juego.
