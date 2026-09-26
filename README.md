@@ -1,50 +1,56 @@
 # Legal | X Systems
 
-![Version](https://img.shields.io/badge/Versión-V1.60-blue)
+![Version](https://img.shields.io/badge/Versión-V1.66-blue)
 ![Estado](https://img.shields.io/badge/Estado-Activo-brightgreen)
   
 
-📌 Descripción
-- Legal | X Systems es un script totalmente legal, diseñado y creado originalmente para Emergency Hamburg en Roblox.  
-Su objetivo es ofrecer funciones permitidas que mejoran tu experiencia dentro del juego sin violar las reglas ni arriesgar tu cuenta.
+📌 Description
+- Legal | X Systems is a fully legal script, originally designed and created for Emergency Hamburg on Roblox.
+Its goal is to offer permitted features that enhance your in-game experience without violating rules or putting your account at risk.
 
-- Este script te proporciona herramientas útiles para mejorar tu rendimiento y ayudarte a ser más eficiente dentro de Emergency Hamburg.  
-Aun así, recuerda siempre jugar con discreción.
-
----
-
-❓ ¿Cómo funciona?
-- El script incluye funciones legales que te brindan ventajas dentro del juego sin infringir los Términos de Servicio de Roblox. 
-- Es una herramienta segura siempre que se use con responsabilidad.
-
-- Más información, soporte y actualizaciones están disponibles en mi servidor de Discord.
+- This script provides useful tools to improve your performance and help you be more efficient within Emergency Hamburg.
+However, always remember to play discreetly.
 
 ---
 
-🔗 Enlaces
-- Servidor de Discord: [Discord](https://discord.gg/6ja6SejfKv)
+❓ How does it work?
+- The script includes legal features that give you in-game advantages without violating Roblox's Terms of Service.
+- It is a safe tool, provided it is used responsibly.
+
+- More information, support, and updates are available on my Discord server.
 
 ---
 
-Características
-- Totalmente legal
-- Optimizado para Emergency Hamburg  
-- Funciones útiles para mejorar tu experiencia  
-- Actualizaciones frecuentes  
-- Seguro para tu cuenta si se usa correctamente  
+🔗 Links
+- Discord Server: [Discord](https://discord.gg/6ja6SejfKv)
 
 ---
 
-📜 Licencia
-- Este script es de uso exclusivo dentro de la comunidad autorizada.  
-- No se permite redistribuir, vender o modificar sin permiso del autor.
-- No se permite compartir Licencia ni redistribuir el script fuera de mi servidor de discord.
+Features
+- Fully legal
+- Optimized for Emergency Hamburg
+- Useful features to enhance your experience
+- Frequent updates
+- Safe for your account if used correctly
+
+---
+
+📜 License
+- This script is for exclusive use within the authorized community.
+- Redistribution, sale, or modification without the author's permission is prohibited.
+- Sharing the license or redistributing the script outside of my Discord server is prohibited.
 
 - ---
 
-# FAST FLAGS Y OTROS SCRIPTS
+# FAST FLAGS AND OTHER SCRIPTS
 
-![Estado](https://img.shields.io/badge/Estado-Activo-brightgreen)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+
+---
+
+- ​​FastFlags are fully legal and only affect textures.
+- They are used solely to improve performance and boost FPS.
+- You can join my Discord server for more information; it includes multiple files for game customization and aesthetics.
 
 ---
 
