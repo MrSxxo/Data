@@ -1,7 +1,7 @@
 # Legal | X Systems
 
-![Version](https://img.shields.io/badge/Versión-V1.74-blue)
-![Estado](https://img.shields.io/badge/Estado-Activo-brightgreen)
+![Version](https://img.shields.io/badge/Version-V1.76-blue)
+![Estado](https://img.shields.io/badge/Status-Online-brightgreen)
   
 
 📌 Description
